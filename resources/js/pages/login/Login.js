@@ -1,12 +1,15 @@
+import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 const Login = () => {
     const [logindata, setLoginData] = useState({
         email: "",
         password: "",
     });
+
+    const navigation = useNavigate();
 
     const validationSchema = Yup.object({
         email: Yup.string()
@@ -17,14 +20,24 @@ const Login = () => {
             .min(8, "Password must be atleast 8 character!"),
     });
 
+    const handlelogin = (values) => {
+        axios
+            .post("http://127.0.0.1:8000/api/login", values)
+            .then((response) => {
+                console.log(response);
+                if (response.data.status == "success") {
+                    localStorage.setItem("Token", response.data.token);
+                    navigation("/url-shorten");
+                }
+            })
+            .catch((error) => {});
+    };
+
     return (
         <Formik
             initialValues={logindata}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-                // same shape as initial values
-                console.log(values);
-            }}
+            onSubmit={handlelogin}
         >
             <div className="container mt-4">
                 <div className="card">
@@ -58,7 +71,7 @@ const Login = () => {
                             </div>
 
                             <button type="submit" className="btn btn-primary">
-                                Submit
+                                login
                             </button>
                         </Form>
                     </div>

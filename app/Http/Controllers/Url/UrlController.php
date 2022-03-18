@@ -49,9 +49,14 @@ class UrlController extends Controller
          $url->short_url = url('').'/'.$code;
          $url->user_ip_address = $request->ip();
 
+        
 
          $url->save();
 
+        //  ip block validation ongong.....
+
+
+        
          $data = [
              'status' => 'success',
              'message' => 'Url successfully shorten!',

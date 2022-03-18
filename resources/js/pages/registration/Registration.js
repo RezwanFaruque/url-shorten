@@ -1,6 +1,7 @@
+import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const Registration = () => {
@@ -9,6 +10,8 @@ const Registration = () => {
         email: "",
         password: "",
     });
+
+    const navigate = useNavigate();
 
     const validationSchema = Yup.object({
         name: Yup.string().required("This field is required!"),
@@ -29,14 +32,23 @@ const Registration = () => {
             }
         ),
     });
+
+    const handleSubmit = (values) => {
+        axios
+            .post("http://127.0.0.1:8000/api/registration", values)
+            .then((response) => {
+                if (response.data.status == "success") {
+                    alert("You registered successfully!");
+                    navigate("/");
+                }
+            })
+            .catch((error) => {});
+    };
     return (
         <Formik
             initialValues={regdata}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-                // same shape as initial values
-                console.log(values);
-            }}
+            onSubmit={handleSubmit}
         >
             <div className="container mt-4">
                 <div className="card">
